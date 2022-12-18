@@ -73,7 +73,7 @@ sub perform_delete {
 die 'UserAgent cannot connect to the internet, Script exiting early.' unless $ua->is_online; 
 
 # Populate the %form_data hash if we can
-%form_data = parse_json($args{data}) if $args{data};
+my %form_data = parse_json($args{data}) if $args{data};
 
 switch($args{verb}) {
     case "get" { perform_get $url, %form_data },
