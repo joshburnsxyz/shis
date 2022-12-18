@@ -63,6 +63,10 @@ my $ua  = LWP::UserAgent->new(
 
 $ua->env_proxy;
 
+# Sanity check - Determine if machine has internet connection
+# before performing request.
+die 'UserAgent cannot connect to the internet, Script exiting early.' unless $ua->is_online; 
+
 # FIXME: Actually perform requests
 switch($args{verb}) {
     case "get" { print "GET: $url" },
