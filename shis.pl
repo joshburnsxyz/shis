@@ -12,7 +12,6 @@ use JSON::Parse 'parse_json';
 
 # globals
 my %args;
-my %form_data;
 my $response;
 
 # Helper, returns true if given string (arg1)
@@ -51,25 +50,21 @@ sub perform_get {
 
 sub perform_post {
     die 'Missing data, Script exiting early.' unless $_[1];
-    %form_data = parse_json($_[1]);
     $response = $ua->post($_[0], %form_data);
 }
 
 sub perform_put {
     die 'Missing data, Script exiting early.' unless $_[1];
-    %form_data = parse_json($_[1]);
     $response = $ua->put($_[0], %form_data)
 }
 
 sub perform_patch {
     die 'Missing data, Script exiting early.' unless $_[1];
-    %form_data = parse_json($_[1]);
     $response = $ua->patch($_[0], %form_data);
 }
 
 sub perform_delete {
     die 'Missing data, Script exiting early.' unless $_[1];
-    %form_data = parse_json($_[1]);
     $response = $ua->delete($_[0], %form_data);
 }
 
@@ -77,7 +72,9 @@ sub perform_delete {
 # before performing request.
 die 'UserAgent cannot connect to the internet, Script exiting early.' unless $ua->is_online; 
 
-# FIXME: Actually perform requests
+# Populate the %form_data hash if we can
+%form_data = parse_json($args{data}) if $arsg{data};
+
 switch($args{verb}) {
     case "get" { perform_get $url, $args{data} },
     case "post" { perform_post $url, $args{data} },
