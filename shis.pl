@@ -69,12 +69,12 @@ die 'UserAgent cannot connect to the internet, Script exiting early.' unless $ua
 
 # FIXME: Actually perform requests
 switch($args{verb}) {
-    case "get" { print "GET: $url" },
-    case "post" { print "POST: $url $data" },
-    case "put" { print "PUT: $url $data" },
-    case "patch" { print "PATCH: $url $data" },
-    case "delete" { print "DELETE: $url" },
-    else { print "GET: $url" },
+    case "get" { perform_get $url },
+    case "post" { perform_post $url },
+    case "put" { perform_put $url },
+    case "patch" { perform_patch $url },
+    case "delete" { perform_delete $url },
+    else { perform_get $url },
 }
 
 if ($response->is_success) {
