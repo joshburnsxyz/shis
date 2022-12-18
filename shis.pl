@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+package shis;
 
 use strict;
 use warnings;
@@ -8,12 +9,38 @@ use LWP::UserAgent       ();
 use Getopt::Long;
 use Switch;
 
-# Helpers
+# Define variables ahead of time
+my %args;
+my $response;
+
+# Helper, returns true if given string (arg1)
+# starts with another given string (arg2)
 sub stringstart {
     return substr($_[0], 0, length[$_[1]]) eq $_[1];
 }
 
-my %args;
+# Request Handlers
+sub perform_get {
+    $response = $ua->get($_[0]);
+}
+
+sub perform_post {
+    $response = $ua->post($_[0], $_[1]);
+}
+
+sub perform_put {
+    $response = $ua->put($_[0], $_[1]);
+}
+
+sub perform_patch {
+    $response = $ua->patch($_[0], $_[1]);
+}
+
+sub perform_delete {
+    $response = $ua->delete($_[0], $_[1]);
+}
+
+# Handle CLI arguments and options
 GetOptions(\%args,
            "verb=s",
            "data=s",
@@ -25,7 +52,7 @@ die "Missing -url!" unless $args{url};
 my $url = $args{url};
 $url = "https://$url" unless stringstart("https://", $url);
 
-
+# Build user agent http interface 
 my $jar = HTTP::CookieJar::LWP->new();
 my $ua  = LWP::UserAgent->new(
   cookie_jar        => $jar,
@@ -45,8 +72,6 @@ switch($args{verb}) {
     case "delete" { print "DELETE: $url" },
     else { print "GET: $url" },
 }
-
-# my $response = $ua->get($url);
 
 if ($response->is_success) {
     print $response->decoded_content;
