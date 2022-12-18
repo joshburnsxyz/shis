@@ -6,10 +6,14 @@ use warnings;
 use HTTP::CookieJar::LWP ();
 use LWP::UserAgent       ();
 
-# TODO: Build URL
-# - Take @ARGV[0] and check if it starts with schema or not
-# - If it does, do nothing
-# - if it does not, prepend https schema to it
+# Helpers
+sub stringstart {
+    return substr($_[0], 0, length[$_[1]]) eq $_[1];
+}
+
+# Build URL
+my $url = $ARGV[0];
+$url = "https://$url" unless stringstart("https://", $url);
 
 # TODO: Handle (-X / --verb VERB) flag
 # - Will take a positional argument that maps to HTTP verb
@@ -26,7 +30,7 @@ my $ua  = LWP::UserAgent->new(
 
 $ua->env_proxy;
 
-my $response = $ua->get($ARGV[0]);
+my $response = $ua->get($url);
 
 if ($response->is_success) {
     print $response->decoded_content;
