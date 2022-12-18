@@ -5,20 +5,25 @@ use warnings;
 
 use HTTP::CookieJar::LWP ();
 use LWP::UserAgent       ();
+use Getopt::Long;
 
 # Helpers
 sub stringstart {
     return substr($_[0], 0, length[$_[1]]) eq $_[1];
 }
 
+my %args;
+GetOptions(\%args,
+           "verb=s",
+           "data=s",
+           "url=s",
+) or die "Usage: perl ./shis.pl [-verb=VERB] [-data=DATA] -url=URL";
+die "Missing -url!" unless $args{url};
+
 # Build URL
-my $url = $ARGV[0];
+my $url = $args{url};
 $url = "https://$url" unless stringstart("https://", $url);
 
-# TODO: Handle (-X / --verb VERB) flag
-# - Will take a positional argument that maps to HTTP verb
-# - get, post, push, patch, put, delete.
-# - Switch case to perform the correct request.
 
 my $jar = HTTP::CookieJar::LWP->new();
 my $ua  = LWP::UserAgent->new(
