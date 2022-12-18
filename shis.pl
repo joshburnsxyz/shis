@@ -9,35 +9,15 @@ use LWP::UserAgent       ();
 use Getopt::Long;
 use Switch;
 
-# Define variables ahead of time
+# globals
 my %args;
+my %form_data;
 my $response;
 
 # Helper, returns true if given string (arg1)
 # starts with another given string (arg2)
 sub stringstart {
     return substr($_[0], 0, length[$_[1]]) eq $_[1];
-}
-
-# Request Handlers
-sub perform_get {
-    $response = $ua->get($_[0]);
-}
-
-sub perform_post {
-    $response = $ua->post($_[0], $_[1]);
-}
-
-sub perform_put {
-    $response = $ua->put($_[0], $_[1]);
-}
-
-sub perform_patch {
-    $response = $ua->patch($_[0], $_[1]);
-}
-
-sub perform_delete {
-    $response = $ua->delete($_[0], $_[1]);
 }
 
 # Handle CLI arguments and options
@@ -62,6 +42,31 @@ my $ua  = LWP::UserAgent->new(
 );
 
 $ua->env_proxy;
+
+# Request Handlers
+sub perform_get {
+    $response = $ua->get($_[0]);
+}
+
+sub perform_post {
+    $response = $ua->post($_[0], $_[1]);
+    die 'Missing data, Script exiting early.' unless $_[1];
+}
+
+sub perform_put {
+    $response = $ua->put($_[0], $_[1]);
+    die 'Missing data, Script exiting early.' unless $_[1];
+}
+
+sub perform_patch {
+    $response = $ua->patch($_[0], $_[1]);
+    die 'Missing data, Script exiting early.' unless $_[1];
+}
+
+sub perform_delete {
+    $response = $ua->delete($_[0], $_[1]);
+    die 'Missing data, Script exiting early.' unless $_[1];
+}
 
 # Sanity check - Determine if machine has internet connection
 # before performing request.
