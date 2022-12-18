@@ -6,6 +6,7 @@ use warnings;
 use HTTP::CookieJar::LWP ();
 use LWP::UserAgent       ();
 use Getopt::Long;
+use Switch;
 
 # Helpers
 sub stringstart {
@@ -35,7 +36,17 @@ my $ua  = LWP::UserAgent->new(
 
 $ua->env_proxy;
 
-my $response = $ua->get($url);
+# FIXME: Actually perform requests
+switch($args{verb}) {
+    case "get" { print "GET: $url" },
+    case "post" { print "POST: $url $data" },
+    case "put" { print "PUT: $url $data" },
+    case "patch" { print "PATCH: $url $data" },
+    case "delete" { print "DELETE: $url" },
+    else { print "GET: $url" },
+}
+
+# my $response = $ua->get($url);
 
 if ($response->is_success) {
     print $response->decoded_content;
