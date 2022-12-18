@@ -8,6 +8,7 @@ use HTTP::CookieJar::LWP ();
 use LWP::UserAgent       ();
 use Getopt::Long;
 use Switch;
+use JSON::Parse 'parse_json';
 
 # globals
 my %args;
@@ -49,23 +50,27 @@ sub perform_get {
 }
 
 sub perform_post {
-    $response = $ua->post($_[0], $_[1]);
     die 'Missing data, Script exiting early.' unless $_[1];
+    %form_data = parse_json($_[1]);
+    $response = $ua->post($_[0], %form_data);
 }
 
 sub perform_put {
-    $response = $ua->put($_[0], $_[1]);
     die 'Missing data, Script exiting early.' unless $_[1];
+    %form_data = parse_json($_[1]);
+    $response = $ua->put($_[0], %form_data)
 }
 
 sub perform_patch {
-    $response = $ua->patch($_[0], $_[1]);
     die 'Missing data, Script exiting early.' unless $_[1];
+    %form_data = parse_json($_[1]);
+    $response = $ua->patch($_[0], %form_data);
 }
 
 sub perform_delete {
-    $response = $ua->delete($_[0], $_[1]);
     die 'Missing data, Script exiting early.' unless $_[1];
+    %form_data = parse_json($_[1]);
+    $response = $ua->delete($_[0], %form_data);
 }
 
 # Sanity check - Determine if machine has internet connection
@@ -74,11 +79,11 @@ die 'UserAgent cannot connect to the internet, Script exiting early.' unless $ua
 
 # FIXME: Actually perform requests
 switch($args{verb}) {
-    case "get" { perform_get $url },
-    case "post" { perform_post $url },
-    case "put" { perform_put $url },
-    case "patch" { perform_patch $url },
-    case "delete" { perform_delete $url },
+    case "get" { perform_get $url, $args{data} },
+    case "post" { perform_post $url, $args{data} },
+    case "put" { perform_put $url, $args{data} },
+    case "patch" { perform_patch $url, $args{data} },
+    case "delete" { perform_delete $url, $args{data} },
     else { perform_get $url },
 }
 
